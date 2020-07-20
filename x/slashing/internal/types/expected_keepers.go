@@ -4,9 +4,9 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
-	"github.com/cosmos/cosmos-sdk/x/params"
-	stakingexported "github.com/cosmos/cosmos-sdk/x/staking/exported"
+	authexported "github.com/Bococoin/core/x/auth/exported"
+	"github.com/Bococoin/core/x/params"
+	stakingexported "github.com/Bococoin/core/x/staking/exported"
 )
 
 // AccountKeeper expected account keeper

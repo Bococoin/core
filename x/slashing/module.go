@@ -13,13 +13,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/cosmos/cosmos-sdk/x/slashing/client/cli"
-	"github.com/cosmos/cosmos-sdk/x/slashing/client/rest"
-	"github.com/cosmos/cosmos-sdk/x/slashing/internal/types"
-	"github.com/cosmos/cosmos-sdk/x/slashing/simulation"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	"github.com/Bococoin/core/types/module"
+	sim "github.com/Bococoin/core/x/simulation"
+	"github.com/Bococoin/core/x/slashing/client/cli"
+	"github.com/Bococoin/core/x/slashing/client/rest"
+	"github.com/Bococoin/core/x/slashing/internal/types"
+	"github.com/Bococoin/core/x/slashing/simulation"
+	stakingkeeper "github.com/Bococoin/core/x/staking/keeper"
 )
 
 var (

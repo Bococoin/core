@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/Bococoin/core/x/gov"
 	paramsclient "github.com/Bococoin/core/x/params/client"
+	"github.com/Bococoin/core/x/slashing"
 	"github.com/Bococoin/core/x/upgrade"
 	upgradeclient "github.com/Bococoin/core/x/upgrade/client"
 	"os"
@@ -54,6 +55,7 @@ var (
 		bank.AppModuleBasic{},
 		staking.AppModuleBasic{},
 		distr.AppModuleBasic{},
+		slashing.AppModuleBasic{},
 		gov.NewAppModuleBasic(
 			paramsclient.ProposalHandler, upgradeclient.ProposalHandler,
 		),
@@ -101,15 +103,16 @@ type bocoCoinApp struct {
 	subspaces map[string]params.Subspace
 
 	// keepers
-	accountKeeper auth.AccountKeeper
-	bankKeeper    bank.Keeper
-	stakingKeeper staking.Keeper
-	distrKeeper   distr.Keeper
-	supplyKeeper  supply.Keeper
-	mintKeeper    bocomint.Keeper
-	paramsKeeper  params.Keeper
-	govKeeper     gov.Keeper
-	upgradeKeeper upgrade.Keeper
+	accountKeeper  auth.AccountKeeper
+	bankKeeper     bank.Keeper
+	stakingKeeper  staking.Keeper
+	distrKeeper    distr.Keeper
+	supplyKeeper   supply.Keeper
+	mintKeeper     bocomint.Keeper
+	paramsKeeper   params.Keeper
+	govKeeper      gov.Keeper
+	slashingKeeper slashing.Keeper
+	upgradeKeeper  upgrade.Keeper
 	// Module Manager
 	mm *module.Manager
 
@@ -132,7 +135,7 @@ func NewBocoCoinApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 
 	keys := sdk.NewKVStoreKeys(
 		bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
-		bocomint.StoreKey, supply.StoreKey,
+		bocomint.StoreKey, supply.StoreKey, slashing.StoreKey,
 		distr.StoreKey, gov.StoreKey, params.StoreKey, upgrade.StoreKey)
 
 	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
@@ -153,6 +156,7 @@ func NewBocoCoinApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
 	app.subspaces[staking.ModuleName] = app.paramsKeeper.Subspace(staking.DefaultParamspace)
 	app.subspaces[distr.ModuleName] = app.paramsKeeper.Subspace(distr.DefaultParamspace)
+	app.subspaces[slashing.ModuleName] = app.paramsKeeper.Subspace(slashing.DefaultParamspace)
 	app.subspaces[bocomint.ModuleName] = app.paramsKeeper.Subspace(bocomint.DefaultParamspace)
 	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
 
@@ -198,6 +202,12 @@ func NewBocoCoinApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 		app.ModuleAccountAddrs(),
 	)
 
+	app.slashingKeeper = slashing.NewKeeper(
+		app.cdc,
+		keys[slashing.StoreKey],
+		&stakingKeeper,
+		app.subspaces[slashing.ModuleName],
+	)
 	app.upgradeKeeper = upgrade.NewKeeper(
 		map[int64]bool{},
 		keys[upgrade.StoreKey],
@@ -228,7 +238,8 @@ func NewBocoCoinApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.stakingKeeper = *stakingKeeper.SetHooks(
 		staking.NewMultiStakingHooks(
-			app.distrKeeper.Hooks()),
+			app.distrKeeper.Hooks(),
+			app.slashingKeeper.Hooks()),
 	)
 
 	app.mm = module.NewManager(
@@ -237,13 +248,14 @@ func NewBocoCoinApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		gov.NewAppModule(app.govKeeper, app.accountKeeper, app.supplyKeeper),
+		slashing.NewAppModule(app.slashingKeeper, app.accountKeeper, app.stakingKeeper),
 		distr.NewAppModule(app.distrKeeper, app.accountKeeper, app.supplyKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
 		bocomint.NewAppModule(app.mintKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
 	)
 
-	app.mm.SetOrderBeginBlockers(upgrade.ModuleName, bocomint.ModuleName, distr.ModuleName)
+	app.mm.SetOrderBeginBlockers(upgrade.ModuleName, bocomint.ModuleName, distr.ModuleName, slashing.ModuleName)
 	app.mm.SetOrderEndBlockers(gov.ModuleName, staking.ModuleName)
 
 	// Sets the order of Genesis - Order matters, genutil is to always come last
@@ -252,6 +264,7 @@ func NewBocoCoinApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 		staking.ModuleName,
 		auth.ModuleName,
 		bank.ModuleName,
+		slashing.ModuleName,
 		gov.ModuleName,
 		bocomint.ModuleName,
 		supply.ModuleName,

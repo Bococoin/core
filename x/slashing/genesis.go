@@ -2,8 +2,8 @@ package slashing
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/slashing/internal/types"
-	"github.com/cosmos/cosmos-sdk/x/staking/exported"
+	"github.com/Bococoin/core/x/slashing/internal/types"
+	"github.com/Bococoin/core/x/staking/exported"
 )
 
 // InitGenesis initialize default parameters

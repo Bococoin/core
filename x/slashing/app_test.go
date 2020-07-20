@@ -11,14 +11,14 @@ import (
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
-	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/cosmos/cosmos-sdk/x/mock"
-	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/cosmos/cosmos-sdk/x/supply"
-	supplyexported "github.com/cosmos/cosmos-sdk/x/supply/exported"
+	"github.com/Bococoin/core/x/auth"
+	authexported "github.com/Bococoin/core/x/auth/exported"
+	"github.com/Bococoin/core/x/bank"
+	"github.com/Bococoin/core/x/mock"
+	"github.com/Bococoin/core/x/staking"
+	"github.com/Bococoin/core/x/staking/types"
+	"github.com/Bococoin/core/x/supply"
+	supplyexported "github.com/Bococoin/core/x/supply/exported"
 )
 
 var (

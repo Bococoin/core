@@ -10,9 +10,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/cosmos/cosmos-sdk/x/slashing/internal/types"
+	"github.com/Bococoin/core/x/auth"
+	"github.com/Bococoin/core/x/auth/client/utils"
+	"github.com/Bococoin/core/x/slashing/internal/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
