@@ -46,6 +46,7 @@ UNAME_M ?= $(shell uname -m)
 
 TOOLS_DESTDIR  ?= $(GOPATH)/bin
 RUNSIM         = $(TOOLS_DESTDIR)/runsim
+STATIK        = $(TOOLS_DESTDIR)/statik
 
 BUF_VERSION ?= 0.7.0
 PROTOC_VERSION ?= 3.11.2
@@ -60,6 +61,17 @@ endif
 all: tools
 
 tools: tools-stamp
+
+# Install the runsim binary with a temporary workaround of entering an outside
+# directory as the "go get" command ignores the -mod option and will polute the
+# go.{mod, sum} files.
+#
+# ref: https://github.com/golang/go/issues/30515
+statik: $(STATIK)
+$(STATIK):
+	@echo "Installing statik..."
+	@(cd /tmp && go get github.com/rakyll/statik@v0.1.6)
+
 
 tools-stamp: $(RUNSIM)
 	touch $@
