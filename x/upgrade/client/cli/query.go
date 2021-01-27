@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/Bococoin/core/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	upgrade "github.com/Bococoin/core/x/upgrade/internal/types"
 )

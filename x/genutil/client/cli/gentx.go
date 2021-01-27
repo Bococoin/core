@@ -19,10 +19,10 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/Bococoin/core/client/context"
+	"github.com/Bococoin/core/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
+	"github.com/Bococoin/core/crypto/keys"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/Bococoin/core/types/module"
@@ -94,7 +94,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager, sm
 
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			kb, err := keys.NewKeyring(sdk.KeyringServiceName(),
-				viper.GetString(flags.FlagKeyringBackend), viper.GetString(flagClientHome), inBuf)
+				viper.GetString(flags.FlagKeyringBackend), viper.GetString(flagClientHome), inBuf, viper.GetString(flags.FlagPass))
 			if err != nil {
 				return errors.Wrap(err, "failed to initialize keybase")
 			}

@@ -7,11 +7,11 @@ import (
 	"path"
 
 	"github.com/Bococoin/core/client"
+	"github.com/Bococoin/core/client/keys"
 	"github.com/Bococoin/core/client/lcd"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/keys"
-	"github.com/cosmos/cosmos-sdk/client/rpc"
+	"github.com/Bococoin/core/client/flags"
+	"github.com/Bococoin/core/client/rpc"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 

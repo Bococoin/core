@@ -2,17 +2,16 @@ package cli
 
 import (
 	"bufio"
-
 	"github.com/spf13/cobra"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/Bococoin/core/client/flags"
 	"github.com/Bococoin/core/x/auth"
 	"github.com/Bococoin/core/x/auth/client/utils"
 	"github.com/Bococoin/core/x/bank/internal/types"
+	"github.com/Bococoin/core/client"
+	"github.com/Bococoin/core/client/context"
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -59,6 +58,8 @@ func SendTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd = flags.PostCommands(cmd)[0]
+
+	cmd.Flags().String(flags.FlagPass, "", "Predefined passphrase for integration usage")
 
 	return cmd
 }

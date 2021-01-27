@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
+	"github.com/Bococoin/core/client/flags"
+	"github.com/Bococoin/core/crypto/keys"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -53,7 +53,7 @@ func NewTxBuilder(
 // NewTxBuilderFromCLI returns a new initialized TxBuilder with parameters from
 // the command line using Viper.
 func NewTxBuilderFromCLI(input io.Reader) TxBuilder {
-	kb, err := keys.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), input)
+	kb, err := keys.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), input, viper.GetString(flags.FlagPass))
 	if err != nil {
 		panic(err)
 	}
@@ -276,7 +276,7 @@ func MakeSignature(keybase keys.Keybase, name, passphrase string,
 	msg StdSignMsg) (sig StdSignature, err error) {
 
 	if keybase == nil {
-		keybase, err = keys.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), os.Stdin)
+		keybase, err = keys.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), os.Stdin, passphrase)
 		if err != nil {
 			return
 		}

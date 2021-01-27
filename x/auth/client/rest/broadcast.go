@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/Bococoin/core/client/context"
+	"github.com/Bococoin/core/types/rest"
 	"github.com/Bococoin/core/x/auth/types"
 )
 

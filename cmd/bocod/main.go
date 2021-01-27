@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/client/debug"
-	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/Bococoin/core/client/debug"
+	"github.com/Bococoin/core/client/flags"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/Bococoin/core/app"

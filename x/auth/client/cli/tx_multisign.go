@@ -12,10 +12,10 @@ import (
 
 	"github.com/tendermint/tendermint/crypto/multisig"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/Bococoin/core/client/context"
+	"github.com/Bococoin/core/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
+	"github.com/Bococoin/core/crypto/keys"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/Bococoin/core/x/auth/client/utils"
@@ -67,7 +67,7 @@ func makeMultiSignCmd(cdc *codec.Codec) func(cmd *cobra.Command, args []string) 
 
 		inBuf := bufio.NewReader(cmd.InOrStdin())
 		kb, err := keys.NewKeyring(sdk.KeyringServiceName(),
-			viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), inBuf)
+			viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), inBuf, viper.GetString(flags.FlagPass))
 		if err != nil {
 			return
 		}

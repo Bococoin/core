@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/Bococoin/core/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/Bococoin/core/types/errors"
 	"github.com/Bococoin/core/x/gov/types"

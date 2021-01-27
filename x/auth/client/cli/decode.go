@@ -8,8 +8,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tendermint/go-amino"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/Bococoin/core/client/context"
+	"github.com/Bococoin/core/client/flags"
 	authtypes "github.com/Bococoin/core/x/auth/types"
 )
 

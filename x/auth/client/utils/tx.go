@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
 	"io/ioutil"
@@ -10,13 +9,12 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/input"
-	"github.com/cosmos/cosmos-sdk/client/keys"
+	authtypes "github.com/Bococoin/core/x/auth/types"
+	"github.com/Bococoin/core/client/context"
+	"github.com/Bococoin/core/client/flags"
+	"github.com/Bococoin/core/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/Bococoin/core/x/auth/types"
 )
 
 // GasEstimateResponse defines a response definition for tx gas estimation.
@@ -85,12 +83,12 @@ func CompleteAndBroadcastTxCLI(txBldr authtypes.TxBuilder, cliCtx context.CLICon
 
 		_, _ = fmt.Fprintf(os.Stderr, "%s\n\n", json)
 
-		buf := bufio.NewReader(os.Stdin)
+/*		buf := bufio.NewReader(os.Stdin)
 		ok, err := input.GetConfirmation("confirm transaction before signing and broadcasting", buf)
 		if err != nil || !ok {
 			_, _ = fmt.Fprintf(os.Stderr, "%s\n", "cancelled transaction")
 			return err
-		}
+		}*/
 	}
 
 	// build and sign the transaction

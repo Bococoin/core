@@ -2,7 +2,7 @@ package rest
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/Bococoin/core/types/rest"
 )
 
 type (

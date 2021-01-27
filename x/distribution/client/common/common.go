@@ -3,7 +3,7 @@ package common
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/Bococoin/core/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/Bococoin/core/x/distribution/types"
 )
