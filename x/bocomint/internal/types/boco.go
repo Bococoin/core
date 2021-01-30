@@ -66,66 +66,66 @@ func DefaultRewardTable() PeriodTable {
 	return PeriodTable{
 		{
 			S: 0,
-			E: boco.BlocksPerQuarter*2 - 1,
+			E: boco.BlocksPerQuarter - 1,
 			M: boco.DefaultMintStartValue,
+		},
+		{
+			S: boco.BlocksPerQuarter,
+			E: boco.BlocksPerQuarter*2 - 1,
+			M: boco.OneCoin * 5.2,
 		},
 		{
 			S: boco.BlocksPerQuarter * 2,
 			E: boco.BlocksPerQuarter*3 - 1,
-			M: boco.OneCoin * 5.2,
+			M: boco.OneCoin * 6.8,
 		},
 		{
 			S: boco.BlocksPerQuarter * 3,
 			E: boco.BlocksPerQuarter*4 - 1,
-			M: boco.OneCoin * 6.76,
+			M: boco.OneCoin * 8.8,
 		},
 		{
 			S: boco.BlocksPerQuarter * 4,
 			E: boco.BlocksPerQuarter*5 - 1,
-			M: boco.OneCoin * 8.788,
+			M: boco.OneCoin * 10.6,
 		},
 		{
 			S: boco.BlocksPerQuarter * 5,
 			E: boco.BlocksPerQuarter*6 - 1,
-			M: boco.OneCoin * 10.5456,
+			M: boco.OneCoin * 12.7,
 		},
 		{
 			S: boco.BlocksPerQuarter * 6,
 			E: boco.BlocksPerQuarter*7 - 1,
-			M: boco.OneCoin * 12.65472,
+			M: boco.OneCoin * 10.2,
 		},
 		{
 			S: boco.BlocksPerQuarter * 7,
 			E: boco.BlocksPerQuarter*8 - 1,
-			M: boco.OneCoin * 10.123776,
+			M: boco.OneCoin * 8.1,
 		},
 		{
 			S: boco.BlocksPerQuarter * 8,
 			E: boco.BlocksPerQuarter*9 - 1,
-			M: boco.OneCoin * 8.099,
+			M: boco.OneCoin * 5.7,
 		},
 		{
 			S: boco.BlocksPerQuarter * 9,
 			E: boco.BlocksPerQuarter*10 - 1,
-			M: boco.OneCoin * 5.669314,
+			M: boco.OneCoin * 4.0,
 		},
 		{
 			S: boco.BlocksPerQuarter * 10,
 			E: boco.BlocksPerQuarter*11 - 1,
-			M: boco.OneCoin * 3.96852,
+			M: boco.OneCoin * 2.8,
 		},
 		{
 			S: boco.BlocksPerQuarter * 11,
 			E: boco.BlocksPerQuarter*12 - 1,
-			M: boco.OneCoin * 2.77964,
+			M: boco.OneCoin * 2.0,
 		},
 		{
 			S: boco.BlocksPerQuarter * 12,
-			E: boco.BlocksPerQuarter*13 - 1,
-			M: boco.OneCoin * 1.944574,
-		},
-		{
-			S: boco.BlocksPerQuarter * 13,
 			E: math.MaxInt64,
 			M: boco.OneCoin,
 		},
