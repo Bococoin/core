@@ -17,7 +17,7 @@ const (
 )
 
 var (
-	DefaultMinSignedPerWindow      = sdk.NewDecWithPrec(10, 0)
+	DefaultMinSignedPerWindow      = sdk.NewDecWithPrec(1, 3)
 	DefaultSlashFractionDoubleSign = sdk.NewDec(1).Quo(sdk.NewDec(20))
 	DefaultSlashFractionDowntime   = sdk.NewDec(1).Quo(sdk.NewDec(100))
 )

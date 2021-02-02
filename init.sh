@@ -11,7 +11,7 @@
 
 ./bocod add-genesis-account $(./bococli keys show premine -a) 25000000000000ubcc
 
-./bocod gentx --name premine --amount 5000000000000ubcc  #DefaultMinValidatorSelfDelegation
+./bocod gentx --name premine --amount 4000000000000ubcc --keyring-backend file #DefaultMinValidatorSelfDelegation
 
 echo "Collecting genesis txs..."
 ./bocod collect-gentxs
