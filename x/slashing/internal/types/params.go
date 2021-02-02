@@ -2,21 +2,22 @@ package types
 
 import (
 	"fmt"
+	boco "github.com/Bococoin/core/types"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/Bococoin/core/x/params"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // Default parameter namespace
 const (
 	DefaultParamspace           = ModuleName
-	DefaultSignedBlocksWindow   = int64(100)
+	DefaultSignedBlocksWindow   = int64(boco.BlocksPerHour * 12)
 	DefaultDowntimeJailDuration = 60 * 10 * time.Second
 )
 
 var (
-	DefaultMinSignedPerWindow      = sdk.NewDecWithPrec(5, 1)
+	DefaultMinSignedPerWindow      = sdk.NewDecWithPrec(10, 0)
 	DefaultSlashFractionDoubleSign = sdk.NewDec(1).Quo(sdk.NewDec(20))
 	DefaultSlashFractionDowntime   = sdk.NewDec(1).Quo(sdk.NewDec(100))
 )

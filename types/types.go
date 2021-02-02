@@ -7,6 +7,7 @@ const (
 	DaysPerYear      = 360
 	DaysPerQuarter   = 90
 	BlockTime        = 10 //seconds
+	BlocksPerHour    = 3600 / BlockTime
 	BlocksPerDay     = (3600 / BlockTime) * 24
 	BlocksPerQuarter = BlocksPerDay * DaysPerQuarter
 	BlocksPerYear    = BlocksPerDay * DaysPerYear
@@ -17,7 +18,7 @@ const (
 
 	DefaultMaxGas = -1
 
-	DefaultMinValidatorSelfDelegation = 5000000 * OneCoin //minimum tokens to be a validator
+	DefaultMinValidatorSelfDelegation = 4000000 * OneCoin //minimum tokens to be a validator
 	DefaultValidatorDelegateEnabled   = false
 
 	// AddrLen defines a valid address length

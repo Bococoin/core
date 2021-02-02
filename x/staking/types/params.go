@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Bococoin/core/x/params"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/Bococoin/core/x/params"
 )
 
 // Staking params default values
@@ -18,7 +18,7 @@ const (
 	// DefaultUnbondingTime reflects three weeks in seconds as the default
 	// unbonding time.
 	// TODO: Justify our choice of default here.
-	DefaultUnbondingTime time.Duration = time.Hour * 24 * 7 * 3
+	DefaultUnbondingTime time.Duration = time.Hour * 12
 
 	// Default maximum number of bonded validators
 	DefaultMaxValidators uint16 = 100
