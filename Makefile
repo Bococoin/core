@@ -15,11 +15,7 @@ export GO111MODULE=on
 # The below include contains the tools and runsim targets.
 include contrib/devtools/Makefile
 
-all: up-swagger go.sum wnd linux
-
-wnd:
-	go install  $(BUILD_FLAGS) ./cmd/bocod
-	go install  $(BUILD_FLAGS) ./cmd/bococli
+all: up-swagger go.sum linux
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
@@ -39,6 +35,11 @@ up-swagger: statik
 linux:
 	env GOOS=linux GOARCH=amd64 go install  $(BUILD_FLAGS) ./cmd/bocod
 	env GOOS=linux GOARCH=amd64 go install  $(BUILD_FLAGS) ./cmd/bococli
+
+wnd:
+	env GOOS=windows GOARCH=amd64 go install  $(BUILD_FLAGS) ./cmd/bocod
+	env GOOS=windows GOARCH=amd64 go install  $(BUILD_FLAGS) ./cmd/bococli
+
 
 install_debug: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/bocobug
