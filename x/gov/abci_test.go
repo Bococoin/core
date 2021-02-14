@@ -259,7 +259,7 @@ func TestProposalPassedEndblocker(t *testing.T) {
 
 	valAddr := sdk.ValAddress(input.addrs[0])
 
-	createValidators(t, stakingHandler, ctx, []sdk.ValAddress{valAddr}, []int64{10})
+	createValidators(t, stakingHandler, ctx, []sdk.ValAddress{valAddr}, []int64{boco.DefaultMinValidatorSelfDelegation})
 	staking.EndBlocker(ctx, input.sk)
 
 	macc := input.keeper.GetGovernanceAccount(ctx)
@@ -269,7 +269,7 @@ func TestProposalPassedEndblocker(t *testing.T) {
 	proposal, err := input.keeper.SubmitProposal(ctx, keep.TestProposal)
 	require.NoError(t, err)
 
-	proposalCoins := sdk.Coins{sdk.NewCoin(boco.DefaultDenom, sdk.TokensFromConsensusPower(10))}
+	proposalCoins := sdk.Coins{sdk.NewCoin(boco.DefaultDenom, sdk.TokensFromConsensusPower(100))}
 	newDepositMsg := NewMsgDeposit(input.addrs[0], proposal.ProposalID, proposalCoins)
 
 	res, err := handler(ctx, newDepositMsg)
@@ -311,7 +311,7 @@ func TestEndBlockerProposalHandlerFailed(t *testing.T) {
 
 	valAddr := sdk.ValAddress(input.addrs[0])
 
-	createValidators(t, stakingHandler, ctx, []sdk.ValAddress{valAddr}, []int64{10})
+	createValidators(t, stakingHandler, ctx, []sdk.ValAddress{valAddr}, []int64{boco.DefaultMinValidatorSelfDelegation})
 	staking.EndBlocker(ctx, input.sk)
 
 	// Create a proposal where the handler will pass for the test proposal
@@ -320,7 +320,7 @@ func TestEndBlockerProposalHandlerFailed(t *testing.T) {
 	proposal, err := input.keeper.SubmitProposal(ctx, keep.TestProposal)
 	require.NoError(t, err)
 
-	proposalCoins := sdk.NewCoins(sdk.NewCoin(boco.DefaultDenom, sdk.TokensFromConsensusPower(10)))
+	proposalCoins := sdk.NewCoins(sdk.NewCoin(boco.DefaultDenom, sdk.TokensFromConsensusPower(100)))
 	newDepositMsg := NewMsgDeposit(input.addrs[0], proposal.ProposalID, proposalCoins)
 
 	res, err := handler(ctx, newDepositMsg)

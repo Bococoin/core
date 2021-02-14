@@ -1,6 +1,7 @@
 package slashing
 
 import (
+	boco "github.com/Bococoin/core/types"
 	"testing"
 	"time"
 
@@ -8,14 +9,14 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	slashingkeeper "github.com/Bococoin/core/x/slashing/internal/keeper"
 	"github.com/Bococoin/core/x/staking"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestBeginBlocker(t *testing.T) {
 	ctx, ck, sk, _, keeper := slashingkeeper.CreateTestInput(t, DefaultParams())
-	power := int64(100)
+	power := int64(boco.DefaultMinValidatorSelfDelegation)
 	amt := sdk.TokensFromConsensusPower(power)
 	addr, pk := slashingkeeper.Addrs[2], slashingkeeper.Pks[2]
 

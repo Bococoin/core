@@ -2,6 +2,7 @@ package slashing
 
 import (
 	"errors"
+	boco "github.com/Bococoin/core/types"
 	"strings"
 	"testing"
 	"time"
@@ -19,7 +20,7 @@ func TestCannotUnjailUnlessJailed(t *testing.T) {
 	// initial setup
 	ctx, ck, sk, _, keeper := slashingkeeper.CreateTestInput(t, DefaultParams())
 	slh := NewHandler(keeper)
-	amt := sdk.TokensFromConsensusPower(100)
+	amt := sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation)
 	addr, val := slashingkeeper.Addrs[0], slashingkeeper.Pks[0]
 
 	msg := slashingkeeper.NewTestMsgCreateValidator(addr, val, amt)
@@ -46,7 +47,7 @@ func TestCannotUnjailUnlessMeetMinSelfDelegation(t *testing.T) {
 	// initial setup
 	ctx, ck, sk, _, keeper := slashingkeeper.CreateTestInput(t, DefaultParams())
 	slh := NewHandler(keeper)
-	amtInt := int64(100)
+	amtInt := int64(boco.DefaultMinValidatorSelfDelegation)
 	addr, val, amt := slashingkeeper.Addrs[0], slashingkeeper.Pks[0], sdk.TokensFromConsensusPower(amtInt)
 	msg := slashingkeeper.NewTestMsgCreateValidator(addr, val, amt)
 	msg.MinSelfDelegation = amt
@@ -65,16 +66,22 @@ func TestCannotUnjailUnlessMeetMinSelfDelegation(t *testing.T) {
 	unbondAmt := sdk.NewCoin(sk.GetParams(ctx).BondDenom, sdk.OneInt())
 	undelegateMsg := staking.NewMsgUndelegate(sdk.AccAddress(addr), addr, unbondAmt)
 	res, err = staking.NewHandler(sk)(ctx, undelegateMsg)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+	if sk.IsDelegateEnabled(ctx) {
+		require.NoError(t, err)
+		require.NotNil(t, res)
 
-	require.True(t, sk.Validator(ctx, addr).IsJailed())
+		require.True(t, sk.Validator(ctx, addr).IsJailed())
 
-	// assert non-jailed validator can't be unjailed
-	res, err = slh(ctx, NewMsgUnjail(addr))
-	require.Error(t, err)
-	require.Nil(t, res)
-	require.True(t, errors.Is(ErrSelfDelegationTooLowToUnjail, err))
+		// assert non-jailed validator can't be unjailed
+		res, err = slh(ctx, NewMsgUnjail(addr))
+		require.Error(t, err)
+		require.Nil(t, res)
+		require.True(t, errors.Is(ErrSelfDelegationTooLowToUnjail, err))
+	} else {
+		require.Error(t, err)
+		require.Nil(t, res)
+
+	}
 }
 
 func TestJailedValidatorDelegations(t *testing.T) {
@@ -84,7 +91,7 @@ func TestJailedValidatorDelegations(t *testing.T) {
 	stakingKeeper.SetParams(ctx, stakingParams)
 
 	// create a validator
-	bondAmount := sdk.TokensFromConsensusPower(10)
+	bondAmount := sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation)
 	valPubKey := slashingkeeper.Pks[0]
 	valAddr, consAddr := slashingkeeper.Addrs[1], sdk.ConsAddress(slashingkeeper.Addrs[0])
 
@@ -104,40 +111,47 @@ func TestJailedValidatorDelegations(t *testing.T) {
 	delAddr := sdk.AccAddress(slashingkeeper.Addrs[2])
 	msgDelegate := slashingkeeper.NewTestMsgDelegate(delAddr, valAddr, bondAmount)
 	res, err = staking.NewHandler(stakingKeeper)(ctx, msgDelegate)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+	if stakingKeeper.IsDelegateEnabled(ctx) {
+		require.NoError(t, err)
+		require.NotNil(t, res)
 
-	unbondAmt := sdk.NewCoin(stakingKeeper.GetParams(ctx).BondDenom, bondAmount)
+		unbondAmt := sdk.NewCoin(stakingKeeper.GetParams(ctx).BondDenom, bondAmount)
 
-	// unbond validator total self-delegations (which should jail the validator)
-	msgUndelegate := staking.NewMsgUndelegate(sdk.AccAddress(valAddr), valAddr, unbondAmt)
-	res, err = staking.NewHandler(stakingKeeper)(ctx, msgUndelegate)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+		// unbond validator total self-delegations (which should jail the validator)
+		msgUndelegate := staking.NewMsgUndelegate(sdk.AccAddress(valAddr), valAddr, unbondAmt)
+		res, err = staking.NewHandler(stakingKeeper)(ctx, msgUndelegate)
 
-	err = stakingKeeper.CompleteUnbonding(ctx, sdk.AccAddress(valAddr), valAddr)
-	require.Nil(t, err, "expected complete unbonding validator to be ok, got: %v", err)
+		require.NoError(t, err)
+		require.NotNil(t, res)
 
-	// verify validator still exists and is jailed
-	validator, found := stakingKeeper.GetValidator(ctx, valAddr)
-	require.True(t, found)
-	require.True(t, validator.IsJailed())
+		err = stakingKeeper.CompleteUnbonding(ctx, sdk.AccAddress(valAddr), valAddr)
+		require.Nil(t, err, "expected complete unbonding validator to be ok, got: %v", err)
 
-	// verify the validator cannot unjail itself
-	res, err = NewHandler(slashingKeeper)(ctx, NewMsgUnjail(valAddr))
-	require.Error(t, err)
-	require.Nil(t, res)
+		// verify validator still exists and is jailed
+		validator, found := stakingKeeper.GetValidator(ctx, valAddr)
+		require.True(t, found)
+		require.True(t, validator.IsJailed())
 
-	// self-delegate to validator
-	msgSelfDelegate := slashingkeeper.NewTestMsgDelegate(sdk.AccAddress(valAddr), valAddr, bondAmount)
-	res, err = staking.NewHandler(stakingKeeper)(ctx, msgSelfDelegate)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+		// verify the validator cannot unjail itself
+		res, err = NewHandler(slashingKeeper)(ctx, NewMsgUnjail(valAddr))
+		require.Error(t, err)
+		require.Nil(t, res)
 
-	// verify the validator can now unjail itself
-	res, err = NewHandler(slashingKeeper)(ctx, NewMsgUnjail(valAddr))
-	require.NoError(t, err)
-	require.NotNil(t, res)
+		// self-delegate to validator
+		msgSelfDelegate := slashingkeeper.NewTestMsgDelegate(sdk.AccAddress(valAddr), valAddr, bondAmount)
+		res, err = staking.NewHandler(stakingKeeper)(ctx, msgSelfDelegate)
+		require.NoError(t, err)
+		require.NotNil(t, res)
+
+		// verify the validator can now unjail itself
+		res, err = NewHandler(slashingKeeper)(ctx, NewMsgUnjail(valAddr))
+		require.NoError(t, err)
+		require.NotNil(t, res)
+	} else {
+		require.Error(t, err)
+		require.Nil(t, res)
+
+	}
 }
 
 func TestInvalidMsg(t *testing.T) {
@@ -156,7 +170,7 @@ func TestHandleAbsentValidator(t *testing.T) {
 
 	// initial setup
 	ctx, ck, sk, _, keeper := slashingkeeper.CreateTestInput(t, slashingkeeper.TestParams())
-	power := int64(100)
+	power := int64(boco.DefaultMinValidatorSelfDelegation)
 	amt := sdk.TokensFromConsensusPower(power)
 	addr, val := slashingkeeper.Addrs[0], slashingkeeper.Pks[0]
 	sh := staking.NewHandler(sk)
@@ -193,7 +207,7 @@ func TestHandleAbsentValidator(t *testing.T) {
 	require.Equal(t, int64(0), info.StartHeight)
 	require.Equal(t, int64(0), info.MissedBlocksCounter)
 
-	// 500 blocks missed
+	// 999 blocks missed
 	for ; height < keeper.SignedBlocksWindow(ctx)+(keeper.SignedBlocksWindow(ctx)-keeper.MinSignedPerWindow(ctx)); height++ {
 		ctx = ctx.WithBlockHeight(height)
 		keeper.HandleValidatorSignature(ctx, val.Address(), power, false)
@@ -286,14 +300,14 @@ func TestHandleAbsentValidator(t *testing.T) {
 	nextHeight := height + keeper.MinSignedPerWindow(ctx) + 1
 	for ; height < nextHeight; height++ {
 		ctx = ctx.WithBlockHeight(height)
-		keeper.HandleValidatorSignature(ctx, val.Address(), power, false)
+		keeper.HandleValidatorSignature(ctx, val.Address(), power, true)
 	}
 
 	// end block
 	staking.EndBlocker(ctx, sk)
 
-	// validator should be jailed again after 500 unsigned blocks
-	nextHeight = height + keeper.MinSignedPerWindow(ctx) + 1
+	// validator should be jailed again after 1000 unsigned blocks
+	nextHeight = height + keeper.SignedBlocksWindow(ctx) + 1
 	for ; height <= nextHeight; height++ {
 		ctx = ctx.WithBlockHeight(height)
 		keeper.HandleValidatorSignature(ctx, val.Address(), power, false)

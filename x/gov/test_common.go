@@ -29,8 +29,8 @@ import (
 )
 
 var (
-	valTokens  = sdk.TokensFromConsensusPower(42)
-	initTokens = sdk.TokensFromConsensusPower(100000)
+	valTokens  = sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation*3)
+	initTokens = sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation*10)
 	valCoins   = sdk.NewCoins(sdk.NewCoin(boco.DefaultDenom, valTokens))
 	initCoins  = sdk.NewCoins(sdk.NewCoin(boco.DefaultDenom, initTokens))
 )

@@ -25,6 +25,7 @@ func TestGetDownloadURL(t *testing.T) {
 }
 
 func TestDoUpdateBinary(t *testing.T) {
+	t.Skip("Skipping UpdateBinary testing")
 	plan := GetTestUpgradePlan()
 
 	config, err := GetDownloadConfig(&plan)
@@ -53,8 +54,8 @@ func GetTestUpgradePlan() types.Plan {
 		Info: "{" +
 			"\"version\":\"1.0.0\"," +
 			"\"binaries\":{" +
-			"\"windows/amd64\":\"https://github.com/Bococoin/core/releases/download/1.0.0/bocod.exe?checksum=sha256:d47042ebad23df6c170bf8aaef823b4da71e2859dda9d7bb63b63f23c115a786\"," +
-			"\"linux/amd64\":\"https://github.com/Bococoin/core/releases/download/1.0.0/bocod?checksum=sha256:75a9725e73ee25d236f8ab8efc5f17c1085d24bd720e03f4bbf478ae0317d11f\"" +
+			"\"windows/amd64\":\"https://github.com/Bococoin/core/releases/download/1.0/bocod_wnd.zip?checksum=sha256:2cf51db906046e3e6743f4cd53b3029fd76ea4a8a5019a7106670fc82b9cc9a1\"," +
+			"\"linux/amd64\":\"https://github.com/Bococoin/core/releases/download/1.0/bocod.zip?checksum=sha256:f53f49b1f0a2f53da19620ac2555077ac195b8c899d6c3a53644190b38bead11\"" +
 			"}}",
 	}
 }

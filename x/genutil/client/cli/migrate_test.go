@@ -47,7 +47,7 @@ func TestMigrateGenesis(t *testing.T) {
 	cdc := makeCodec()
 
 	genesisPath := path.Join(home, "genesis.json")
-	target := "v0.36"
+	target := "v0.38"
 
 	defer cleanup()
 

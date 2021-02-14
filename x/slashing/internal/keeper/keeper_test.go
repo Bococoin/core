@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	boco "github.com/Bococoin/core/types"
 	"testing"
 	"time"
 
@@ -18,7 +19,7 @@ func TestHandleNewValidator(t *testing.T) {
 	// initial setup
 	ctx, ck, sk, _, keeper := CreateTestInput(t, TestParams())
 	addr, val := Addrs[0], Pks[0]
-	amt := sdk.TokensFromConsensusPower(100)
+	amt := sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation)
 	sh := staking.NewHandler(sk)
 
 	// 1000 first blocks not a validator
@@ -53,7 +54,7 @@ func TestHandleNewValidator(t *testing.T) {
 	validator, _ := sk.GetValidatorByConsAddr(ctx, sdk.GetConsAddress(val))
 	require.Equal(t, sdk.Bonded, validator.GetStatus())
 	bondPool := sk.GetBondedPool(ctx)
-	expTokens := sdk.TokensFromConsensusPower(100)
+	expTokens := sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation)
 	require.Equal(t, expTokens.Int64(), bondPool.GetCoins().AmountOf(sk.BondDenom(ctx)).Int64())
 }
 
@@ -63,7 +64,7 @@ func TestHandleAlreadyJailed(t *testing.T) {
 
 	// initial setup
 	ctx, _, sk, _, keeper := CreateTestInput(t, types.DefaultParams())
-	power := int64(100)
+	power := int64(boco.DefaultMinValidatorSelfDelegation)
 	amt := sdk.TokensFromConsensusPower(power)
 	addr, val := Addrs[0], Pks[0]
 	sh := staking.NewHandler(sk)
@@ -94,7 +95,7 @@ func TestHandleAlreadyJailed(t *testing.T) {
 	require.Equal(t, sdk.Unbonding, validator.GetStatus())
 
 	// validator should have been slashed
-	resultingTokens := amt.Sub(sdk.TokensFromConsensusPower(1))
+	resultingTokens := amt.Sub(sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation / 100))
 	require.Equal(t, resultingTokens, validator.GetTokens())
 
 	// another block missed
@@ -118,7 +119,7 @@ func TestValidatorDippingInAndOut(t *testing.T) {
 	params := sk.GetParams(ctx)
 	params.MaxValidators = 1
 	sk.SetParams(ctx, params)
-	power := int64(100)
+	power := int64(boco.DefaultMinValidatorSelfDelegation)
 	amt := sdk.TokensFromConsensusPower(power)
 	addr, val := Addrs[0], Pks[0]
 	consAddr := sdk.ConsAddress(addr)
@@ -137,7 +138,7 @@ func TestValidatorDippingInAndOut(t *testing.T) {
 	}
 
 	// kick first validator out of validator set
-	newAmt := sdk.TokensFromConsensusPower(101)
+	newAmt := sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation)
 	res, err = sh(ctx, NewTestMsgCreateValidator(Addrs[1], Pks[1], newAmt))
 	require.NoError(t, err)
 	require.NotNil(t, res)
@@ -151,6 +152,9 @@ func TestValidatorDippingInAndOut(t *testing.T) {
 	height = int64(700)
 	ctx = ctx.WithBlockHeight(height)
 
+	if !sk.IsDelegateEnabled(ctx) {
+		t.Skip("Skipping because delegations disabled by network parameter")
+	}
 	// validator added back in
 	delTokens := sdk.TokensFromConsensusPower(50)
 	res, err = sh(ctx, NewTestMsgDelegate(sdk.AccAddress(Addrs[2]), Addrs[0], delTokens))
@@ -171,9 +175,9 @@ func TestValidatorDippingInAndOut(t *testing.T) {
 	validator, _ = sk.GetValidator(ctx, addr)
 	require.Equal(t, sdk.Bonded, validator.Status)
 
-	// validator misses 500 more blocks, 501 total
+	// validator misses 999 more blocks, 501 total
 	latest := height
-	for ; height < latest+500; height++ {
+	for ; height < latest+999; height++ {
 		ctx = ctx.WithBlockHeight(height)
 		keeper.HandleValidatorSignature(ctx, val.Address(), newPower, false)
 	}

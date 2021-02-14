@@ -4,6 +4,7 @@ package slashing
 
 import (
 	"errors"
+	boco "github.com/Bococoin/core/types"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -116,10 +117,10 @@ func checkValidatorSigningInfo(t *testing.T, mapp *mock.App, keeper Keeper,
 func TestSlashingMsgs(t *testing.T) {
 	mapp, stakingKeeper, keeper := getMockApp(t)
 
-	genTokens := sdk.TokensFromConsensusPower(42)
-	bondTokens := sdk.TokensFromConsensusPower(10)
-	genCoin := sdk.NewCoin(sdk.DefaultBondDenom, genTokens)
-	bondCoin := sdk.NewCoin(sdk.DefaultBondDenom, bondTokens)
+	genTokens := sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation*10)
+	bondTokens := sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation)
+	genCoin := sdk.NewCoin(boco.DefaultDenom, genTokens)
+	bondCoin := sdk.NewCoin(boco.DefaultDenom, bondTokens)
 
 	acc1 := &auth.BaseAccount{
 		Address: addr1,

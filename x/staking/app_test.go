@@ -117,8 +117,8 @@ func checkDelegation(
 func TestStakingMsgs(t *testing.T) {
 	mApp, keeper := getMockApp(t)
 
-	genTokens := sdk.TokensFromConsensusPower(42)
-	bondTokens := sdk.TokensFromConsensusPower(10)
+	genTokens := sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation*10)
+	bondTokens := sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation)
 	genCoin := sdk.NewCoin(boco.DefaultDenom, genTokens)
 	bondCoin := sdk.NewCoin(boco.DefaultDenom, bondTokens)
 
@@ -166,24 +166,29 @@ func TestStakingMsgs(t *testing.T) {
 
 	validator = checkValidator(t, mApp, keeper, sdk.ValAddress(addr1), true)
 	require.Equal(t, description, validator.Description)
+	ctxCheck := mApp.NewContext(true, abci.Header{})
+	if keeper.IsDelegateEnabled(ctxCheck) {
+		// delegate
+		mock.CheckBalance(t, mApp, addr2, sdk.Coins{genCoin})
+		delegateMsg := NewMsgDelegate(addr2, sdk.ValAddress(addr1), bondCoin)
 
-	// delegate
-	mock.CheckBalance(t, mApp, addr2, sdk.Coins{genCoin})
-	delegateMsg := NewMsgDelegate(addr2, sdk.ValAddress(addr1), bondCoin)
+		header = abci.Header{Height: mApp.LastBlockHeight() + 1}
+		mock.SignCheckDeliver(t, mApp.Cdc, mApp.BaseApp, header, []sdk.Msg{delegateMsg}, []uint64{1}, []uint64{0}, true, true, priv2)
+		mock.CheckBalance(t, mApp, addr2, sdk.Coins{genCoin.Sub(bondCoin)})
+		checkDelegation(t, mApp, keeper, addr2, sdk.ValAddress(addr1), true, bondTokens.ToDec())
 
-	header = abci.Header{Height: mApp.LastBlockHeight() + 1}
-	mock.SignCheckDeliver(t, mApp.Cdc, mApp.BaseApp, header, []sdk.Msg{delegateMsg}, []uint64{1}, []uint64{0}, true, true, priv2)
-	mock.CheckBalance(t, mApp, addr2, sdk.Coins{genCoin.Sub(bondCoin)})
-	checkDelegation(t, mApp, keeper, addr2, sdk.ValAddress(addr1), true, bondTokens.ToDec())
+		// begin unbonding
+		beginUnbondingMsg := NewMsgUndelegate(addr2, sdk.ValAddress(addr1), bondCoin)
+		header = abci.Header{Height: mApp.LastBlockHeight() + 1}
+		mock.SignCheckDeliver(t, mApp.Cdc, mApp.BaseApp, header, []sdk.Msg{beginUnbondingMsg}, []uint64{1}, []uint64{1}, true, true, priv2)
 
-	// begin unbonding
-	beginUnbondingMsg := NewMsgUndelegate(addr2, sdk.ValAddress(addr1), bondCoin)
-	header = abci.Header{Height: mApp.LastBlockHeight() + 1}
-	mock.SignCheckDeliver(t, mApp.Cdc, mApp.BaseApp, header, []sdk.Msg{beginUnbondingMsg}, []uint64{1}, []uint64{1}, true, true, priv2)
+		// delegation should exist anymore
+		checkDelegation(t, mApp, keeper, addr2, sdk.ValAddress(addr1), false, sdk.Dec{})
 
-	// delegation should exist anymore
-	checkDelegation(t, mApp, keeper, addr2, sdk.ValAddress(addr1), false, sdk.Dec{})
-
+		// balance should be the same because bonding not yet complete
+		mock.CheckBalance(t, mApp, addr2, sdk.Coins{genCoin.Sub(bondCoin)})
+	}
 	// balance should be the same because bonding not yet complete
-	mock.CheckBalance(t, mApp, addr2, sdk.Coins{genCoin.Sub(bondCoin)})
+	mock.CheckBalance(t, mApp, addr2, sdk.Coins{genCoin})
+
 }

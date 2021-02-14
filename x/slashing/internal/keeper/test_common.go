@@ -5,6 +5,7 @@ package keeper
 
 import (
 	"encoding/hex"
+	boco "github.com/Bococoin/core/types"
 	"testing"
 	"time"
 
@@ -40,8 +41,8 @@ var (
 		sdk.ValAddress(Pks[1].Address()),
 		sdk.ValAddress(Pks[2].Address()),
 	}
-	InitTokens = sdk.TokensFromConsensusPower(200)
-	initCoins  = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, InitTokens))
+	InitTokens = sdk.TokensFromConsensusPower(boco.DefaultMinValidatorSelfDelegation*10)
+	initCoins  = sdk.NewCoins(sdk.NewCoin(boco.DefaultDenom, InitTokens))
 )
 
 func createTestCodec() *codec.Codec {
@@ -99,7 +100,7 @@ func CreateTestInput(t *testing.T, defaults types.Params) (sdk.Context, bank.Kee
 	}
 	supplyKeeper := supply.NewKeeper(cdc, keySupply, accountKeeper, bk, maccPerms)
 
-	totalSupply := sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, InitTokens.MulRaw(int64(len(Addrs)))))
+	totalSupply := sdk.NewCoins(sdk.NewCoin(boco.DefaultDenom, InitTokens.MulRaw(int64(len(Addrs)))))
 	supplyKeeper.SetSupply(ctx, supply.NewSupply(totalSupply))
 
 	sk := staking.NewKeeper(cdc, keyStaking, supplyKeeper, paramsKeeper.Subspace(staking.DefaultParamspace))
@@ -147,12 +148,12 @@ func TestParams() types.Params {
 func NewTestMsgCreateValidator(address sdk.ValAddress, pubKey crypto.PubKey, amt sdk.Int) staking.MsgCreateValidator {
 	commission := staking.NewCommissionRates(sdk.ZeroDec(), sdk.ZeroDec(), sdk.ZeroDec())
 	return staking.NewMsgCreateValidator(
-		address, pubKey, sdk.NewCoin(sdk.DefaultBondDenom, amt),
+		address, pubKey, sdk.NewCoin(boco.DefaultDenom, amt),
 		staking.Description{}, commission, sdk.OneInt(),
 	)
 }
 
 func NewTestMsgDelegate(delAddr sdk.AccAddress, valAddr sdk.ValAddress, delAmount sdk.Int) staking.MsgDelegate {
-	amount := sdk.NewCoin(sdk.DefaultBondDenom, delAmount)
+	amount := sdk.NewCoin(boco.DefaultDenom, delAmount)
 	return staking.NewMsgDelegate(delAddr, valAddr, amount)
 }

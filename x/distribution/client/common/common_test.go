@@ -24,8 +24,8 @@ func TestQueryDelegationRewardsAddrValidation(t *testing.T) {
 	}{
 		{"invalid delegator address", args{"invalid", ""}, nil, true},
 		{"empty delegator address", args{"", ""}, nil, true},
-		{"invalid validator address", args{"cosmos1zxcsu7l5qxs53lvp0fqgd09a9r2g6kqrk2cdpa", "invalid"}, nil, true},
-		{"empty validator address", args{"cosmos1zxcsu7l5qxs53lvp0fqgd09a9r2g6kqrk2cdpa", ""}, nil, true},
+		{"invalid validator address", args{"boco1z98klpu4r50nm4pm8hewcryq55288r922rg5v9", "invalid"}, nil, true},
+		{"empty validator address", args{"boco1z98klpu4r50nm4pm8hewcryq55288r922rg5v9", ""}, nil, true},
 	}
 	for _, tt := range tests {
 		tt := tt
