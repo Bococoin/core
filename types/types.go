@@ -12,9 +12,9 @@ const (
 	BlocksPerQuarter = BlocksPerDay * DaysPerQuarter
 	BlocksPerYear    = BlocksPerDay * DaysPerYear
 
-	DefaultMintStartValue  = 4 * OneCoin          //minting 4 BCC per block
-	DefaultMaxEmission     = 1000000000 * OneCoin //1 000 000 000 BCC
-	DefaultMintingInterval = 100                  //Add coins to fee pool every 100 block to decrease blockchain fast growing
+	DefaultMintStartValue  = 4 * OneCoin         //minting 4 BCC per block
+	DefaultMaxEmission     = 100000000 * OneCoin //100 000 000 BCC
+	DefaultMintingInterval = 100                 //Add coins to fee pool every 100 block to decrease blockchain fast growing
 
 	DefaultMaxGas = -1
 
