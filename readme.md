@@ -21,9 +21,8 @@ make all
 $ cd GOPATH/bin
 $ chmod +x ./bocod
 $ chmod +x ./bococli
-$ wget -O genesis.json https://rpc.bococoin.com/genesis
 $ ./bocod init <node_moniker> --chain-id=boco-02
-$ cp -f genesis.json /home/user/.bococoin/config/
+$ wget -O genesis.json -P /home/user/.bococoin/config https://github.com/Bococoin/core/releases/download/1.0/genesis.json
 $ ./bocod start
 ```
 

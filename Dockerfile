@@ -2,7 +2,7 @@
 # > docker build -t bococoin/bococoin-node .
 # > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.bocod:/root/.bococoin -v ~/.bococli:/root/.bococoin/cli bococoin bocod init moniker --chain-id boco-02
 # > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.bocod:/root/.bococoin -v ~/.bococli:/root/.bococoin/cli bococoin rm -f /root/.bococoin/config/genesis.json
-# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.bocod:/root/.bococoin -v ~/.bococli:/root/.bococoin/cli bococoin wget -O genesis.json -P /root/.bococoin/config https://rpc.bococoin.com/genesis
+# > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.bocod:/root/.bococoin -v ~/.bococli:/root/.bococoin/cli bococoin wget -O genesis.json -P /root/.bococoin/config https://github.com/Bococoin/core/releases/download/1.0/genesis.json
 # > docker run -it -p 46657:46657 -p 46656:46656 -v ~/.bocod:/root/.bococoin -v ~/.bococli:/root/.bococoin/cli bococoin bocod start
 FROM golang:alpine AS build-env
 

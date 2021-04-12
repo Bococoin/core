@@ -16,7 +16,8 @@ const (
 	DefaultMaxEmission     = 100000000 * OneCoin //100 000 000 BCC
 	DefaultMintingInterval = 100                 //Add coins to fee pool every 100 block to decrease blockchain fast growing
 
-	DefaultMaxGas = -1
+	DefaultMaxGas      = -1
+	DefaultMinGasPrice = "0.25ubcc"
 
 	DefaultMinValidatorSelfDelegation = 4000000 * OneCoin //minimum tokens to be a validator
 	DefaultValidatorDelegateEnabled   = false

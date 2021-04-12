@@ -19,11 +19,12 @@ import (
 	"github.com/tendermint/tendermint/types"
 
 	"github.com/Bococoin/core/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/server"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/Bococoin/core/types/module"
 	"github.com/Bococoin/core/x/genutil"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/server"
+	srvCfg "github.com/cosmos/cosmos-sdk/server/config"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
@@ -87,6 +88,11 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 			config.Moniker = args[0]
 			config.Consensus.TimeoutCommit = time.Second * boco.BlockTime
 			config.RPC.MaxSubscriptionsPerClient = 15
+			config.P2P.PersistentPeers = "" +
+				"ee360fe56121129c93c5f084d1121ab3aeceaf30@95.217.186.21:26656, " +
+				"48f14931a5d3bc92f1ea686b927aa0f748ef10ef@95.217.144.116:26656, " +
+				"ad05238ba1e342abd2259ba9512d1591eb555681@148.251.6.157:26656, " +
+				"010b084161479734e252122cef39f855678fa6e2@95.216.224.245:26656"
 
 			genFile := config.GenesisFile()
 			if !viper.GetBool(flagOverwrite) && tmos.FileExists(genFile) {
@@ -132,9 +138,16 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 				return errors.Wrap(err, "Failed to export genesis file")
 			}
 
+			cfg.WriteConfigFile(filepath.Join(config.RootDir, "config", "config.toml"), config)
+
+			appConfigFilePath := filepath.Join(config.RootDir, "config/app.toml")
+
+			appConf, _ := srvCfg.ParseConfig()
+			appConf.MinGasPrices = boco.DefaultMinGasPrice
+			srvCfg.WriteConfigFile(appConfigFilePath, appConf)
+
 			toPrint := newPrintInfo(config.Moniker, chainID, nodeID, "", appState)
 
-			cfg.WriteConfigFile(filepath.Join(config.RootDir, "config", "config.toml"), config)
 			return displayInfo(cdc, toPrint)
 		},
 	}
